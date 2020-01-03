@@ -1,0 +1,298 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Payment gateway components",
+    "description" : "Common components for Payment gateway REST APIs",
+    "version" : "1.0"
+  },
+  "components" : {
+    "schemas" : {
+      "ErrorModel" : {
+        "type" : "object",
+        "required" : [ "code", "message" ],
+        "properties" : {
+          "code" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "message" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Transaction" : {
+        "type" : "object",
+        "required" : [ "card", "amount" ],
+        "optional" : [ "message" ],
+        "properties" : {
+          "card" : {
+            "type" : "Card"
+          },
+          "amount" : {
+            "type" : "decimal",
+            "format" : "decimal"
+          },
+          "message" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Card" : {
+        "type" : "object",
+        "required" : [ "name", "number", "expiryMonth", "expiryYear", "cvv" ],
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "maxLength" : 30
+          },
+          "number" : {
+            "type" : "integer",
+            "format" : "int32",
+            "maxLength" : 16,
+            "minLength" : 10
+          },
+          "expiryMonth" : {
+            "type" : "integer",
+            "maxLength" : 2,
+            "format" : "int32",
+            "maxValue" : 1,
+            "minValue" : 12
+          },
+          "expiryYear" : {
+            "type" : "integer",
+            "maxLength" : 4,
+            "format" : "int32",
+            "maxValue" : 9999,
+            "minValue" : 2020
+          },
+          "cvv" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "TransactionResponse" : {
+        "type" : "object",
+        "required" : [ "code", "message" ],
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TransactionResponseList" : {
+        "type" : "object",
+        "required" : [ "transaction" ],
+        "properties" : {
+          "transaction" : {
+            "type" : "TransactionResponse"
+          }
+        }
+      }
+    },
+    "parameters" : {
+      "offsetParam" : {
+        "name" : "offset",
+        "in" : "query",
+        "schema" : {
+          "type" : "integer",
+          "minimum" : 0
+        },
+        "description" : "The number of items to skip before returning the results"
+      },
+      "limitParam" : {
+        "in" : "query",
+        "name" : "limit",
+        "schema" : {
+          "type" : "integer",
+          "format" : "int32",
+          "minimum" : 1,
+          "maximum" : 100,
+          "default" : 20
+        },
+        "description" : "The number of items to return"
+      }
+    },
+    "requestBodies" : {
+      "PaymentTransaction" : {
+        "description" : "An object containing payment transaction data info",
+        "required" : true,
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "type" : "Transaction"
+            }
+          }
+        }
+      }
+    },
+    "responses" : {
+      "GeneralError" : {
+        "description" : "An error occurred",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/ErrorModel"
+            }
+          }
+        },
+        "headers" : {
+          "X-RateLimit-Limit" : {
+            "$ref" : "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining" : {
+            "$ref" : "#/components/headers/X-RateLimit-Remaining"
+          }
+        }
+      },
+      "Success" : {
+        "description" : "Request processed successfully",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/TransactionResponse"
+            }
+          }
+        },
+        "headers" : {
+          "X-RateLimit-Limit" : {
+            "$ref" : "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining" : {
+            "$ref" : "#/components/headers/X-RateLimit-Remaining"
+          }
+        }
+      }
+    },
+    "headers" : {
+      "X-RateLimit-Limit" : {
+        "description" : "Request limit per hour",
+        "schema" : {
+          "type" : "integer"
+        },
+        "example" : 100
+      },
+      "X-RateLimit-Remaining" : {
+        "description" : "Remaining requests for the hour",
+        "schema" : {
+          "type" : "integer"
+        },
+        "example" : 94
+      }
+    },
+    "pathitems" : {
+      "Transaction" : {
+        "get" : {
+          "summary" : "Get all transactions",
+          "description" : "This operation supports pagination",
+          "parameters" : [ {
+            "$ref" : "#/components/parameters/offsetParam"
+          }, {
+            "$ref" : "#/components/parameters/limitParam"
+          } ],
+          "responses" : {
+            "$ref" : "#/components/schemas/TransactionResponseList"
+          }
+        },
+        "post" : {
+          "summary" : "Request for a new payment transaction",
+          "requestBody" : {
+            "$ref" : "#/components/requestBodies/PaymentTransaction"
+          },
+          "responses" : {
+            "$ref" : "#/components/schemas/TransactionResponse"
+          }
+        }
+      }
+    },
+    "examples" : {
+      "ValidTransaction" : {
+        "summary" : "Sample valid Transation data",
+        "value" : null,
+        "card" : {
+          "name" : "Sandhya P Deshpande",
+          "number" : 65434455123456677,
+          "expiryMonth" : 9.0,
+          "expiryYear" : 2021,
+          "cvv" : 123
+        },
+        "amount" : 200,
+        "message" : "fist transaction to check"
+      },
+      "ValidTransactionResponse" : {
+        "summary" : "Sample valid Transation response data",
+        "value" : null,
+        "code" : 201,
+        "message" : "successful payment"
+      },
+      "FailedTransactionResponse" : {
+        "summary" : "Sample failed Transation response data",
+        "value" : null,
+        "code" : 401,
+        "message" : "failed due to insufficient funds"
+      },
+      "InvalidTransactionResponse" : {
+        "summary" : "Sample invalid Transation response data",
+        "value" : null,
+        "code" : 301,
+        "message" : "failed due to invalid data"
+      },
+      "IntegrationFailedTransactionResponse" : {
+        "summary" : "Sample Transation response data due toconnectivity",
+        "value" : null,
+        "code" : 501,
+        "message" : "failed due to integratin issues"
+      },
+      "ValidCard" : {
+        "summary" : "Sample valid Card data",
+        "value" : null,
+        "name" : "Sandhya P Deshpande",
+        "number" : 65434455123456677,
+        "expiryMonth" : 9.0,
+        "expiryYear" : 2021,
+        "cvv" : 123
+      },
+      "InvalidNameCard" : {
+        "summary" : "Sample invalid Card data",
+        "value" : null,
+        "name" : 1.2345678901234568E38,
+        "number" : 65434455123456677,
+        "expiryMonth" : 9.0,
+        "expiryYear" : 2021,
+        "cvv" : 123
+      },
+      "InvalidNumberCard" : {
+        "summary" : "Sample Card data",
+        "value" : null,
+        "name" : "Sandhya P Deshpande",
+        "number" : 65789,
+        "expiryMonth" : 9.0,
+        "expiryYear" : 2021,
+        "cvv" : 123
+      },
+      "InvalidExpiryCard" : {
+        "summary" : "Sample Card data",
+        "value" : null,
+        "name" : "Sandhya P Deshpande",
+        "number" : 65434455123456677,
+        "expiryMonth" : 99,
+        "expiryYear" : 20,
+        "cvv" : 123
+      },
+      "InvalidCVVCard" : {
+        "summary" : "Sample Card data",
+        "value" : null,
+        "name" : "Sandhya P Deshpande",
+        "number" : 65434455123456677,
+        "expiryMonth" : 9.0,
+        "expiryYear" : 2021,
+        "cvv" : "abc"
+      }
+    },
+    "links" : { },
+    "callbacks" : { }
+  }
+}
