@@ -1,0 +1,48 @@
+  <div class="container-fluid bg-3 text-center form-group"> 
+    <h3>Get more points here!</h3>
+    <div class="row">
+        <form #purchaseForm="ngForm">
+  
+        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">  
+            <label for="points">Points</label>
+            <input type="text" id="points" name="points" #points
+                                class="form-control" required ngModel minlength=1  pattern="[0-9]*">
+            <label for="amount">Amount</label> 
+            <input type="text" id="amount" name="amount" readonly="true" 
+                class="form-control" ngModel value={{calculatedAmount}}> 
+                <p>
+                    <label>Find how much you need to pay (INR)!</label>
+                </p>
+                <p>
+                    <button class="btn btn-primary" style='margin-right:16px'
+                    (click)="getAmountForPoints(points.value)">Get amount</button>
+                </p>
+        </div>
+        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-2">  
+            
+        </div> 
+
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-5">  
+            <label for="payFrom">Pay from</label>
+                <input type="text" id="payFrom" name="payFrom"  
+                                    class="form-control" ngModel>
+                <label for="payTo">To ATLANTIS</label>
+                <!--<input type="text" id="payTo" name="payTo" value="ATLANTIS" readonly="true"
+                                    class="form-control" ngModel> -->
+                <p>
+                    <label> Confirm payment    </label>
+                </p>
+                <p>
+                    <button class="btn btn-primary"  (click)="purchase(purchaseForm, $event)"
+                    style='margin-right:16px'>Purchase</button> 
+                    <button class="btn btn-primary" type="reset"
+                    style='margin-right:16px'>Reset</button>
+                </p>    
+        </div>    
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="align-content: left;">    
+        <p class="success-message"> {{ message }} </p> 
+        </div> 
+    </form>
+                                    
+    </div>  
+</div>

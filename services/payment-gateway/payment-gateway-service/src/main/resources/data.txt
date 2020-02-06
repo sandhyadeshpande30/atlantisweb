@@ -1,0 +1,4 @@
+insert into payment_transaction values(1, 1000.0,'first transaction', sysdate(), 'spd', 'test account');
+insert into payment_transaction values(2, 2000.0,'second transaction', sysdate(), 'spd', 'test account');
+insert into payment_transaction values(3, 3000.0,'third transaction', sysdate(), 'spd', 'test account');
+ 
