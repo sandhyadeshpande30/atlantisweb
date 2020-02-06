@@ -1,0 +1,27 @@
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Transaction</th>
+                <th scope="col">Date</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Points</th>
+                <th scope="col">Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let transaction of transactions; index as i">
+                <th scope="row">{{ i+1 }}</th>
+                <td>{{ transaction.type }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.amount | number }}</td>
+                <td>{{ transaction.points | number }}</td>
+                <td>{{ transaction.remarks }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- <div class="row">
+    <ngb-pagination></ngb-pagination>
+</div> -->
